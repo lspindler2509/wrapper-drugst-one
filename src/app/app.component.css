@@ -1,0 +1,40 @@
+.page-title {
+    text-align: left;
+    margin: 20px;
+}
+
+.upload-section {
+    text-align: left;
+    margin: 20px;
+}
+
+mat-label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+input[type="file"] {
+    display: none; /* Versteckt das Dateieingabefeld */
+}
+
+label {
+    display: inline-block; /* Damit der Text neben dem Button erscheint */
+    cursor: pointer; /* Ändert den Mauszeiger in die Hand, um zu zeigen, dass auf das Label geklickt werden kann */
+    vertical-align: middle; /* Zentriert das Label vertikal mit dem Inhalt */
+}
+
+span {
+    display: inline-block; /* Damit der Dateiname neben dem Button erscheint */
+    margin-left: 10px; /* Abstand zwischen dem Button und dem Dateinamen */
+    vertical-align: middle; /* Zentriert den Text vertikal mit dem Button */
+}
+
+.upload-section button.mat-raised-button {
+    display: block; /* Ändert den Button in ein block-level Element */
+    margin: 0 auto; /* Zentriert den Button horizontal */
+    margin-top: 10px; /* Fügt einen oberen Abstand hinzu */
+    padding: 10px 20px; /* Fügt Padding hinzu */
+    text-align: center; /* Zentriert den Text im Button */
+    width: fit-content; /* Setzt die Breite auf die Größe des Inhalts */
+}
+
