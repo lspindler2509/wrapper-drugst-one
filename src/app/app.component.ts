@@ -5,13 +5,16 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { Node, Edge } from './interface';
 import { MatIconModule } from '@angular/material/icon';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule],
+  imports: [RouterOutlet, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, CommonModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -22,6 +25,7 @@ export class AppComponent {
   public edges: Edge[] = [];
   public seedFile: any;
   public interactionFile: any;
+  public network: any;
 
   seedFileName: string | undefined;
   interactionFileName: string | undefined;
@@ -62,21 +66,22 @@ export class AppComponent {
 
         // check if line format correct
         if (from && to) {
-          // delete idspace prefix
-          const cleanFrom = from.trim().split('.')[1];
-          const cleanTo = to.trim().split('.')[1];
+          // delete idspace prefix if exists
+          const cleanFrom = from.trim().split('.').length > 1 ? from.trim().split('.')[1] : from.trim();
+          const cleanTo = to.trim().split('.').length > 1 ? to.trim().split('.')[1] : to.trim();
+
 
           // undirected graph -> check that edge between 2 proteins only once used
           const edgeKey = [cleanFrom, cleanTo].sort().join('-');
 
           // only add node if it doesn't exist alrady
           if (!uniqueNodes.has(cleanFrom)) {
-            const group = seedGenes.has(cleanFrom) ? 'seed' : 'protein';
+            const group = seedGenes.has(cleanFrom) ? 'important' : 'gene';
             this.nodes.push({ id: cleanFrom, group: group });
             uniqueNodes.add(cleanFrom);
           }
           if (!uniqueNodes.has(cleanTo)) {
-            const group = seedGenes.has(cleanFrom) ? 'seed' : 'protein';
+            const group = seedGenes.has(cleanTo) ? 'important' : 'gene';
             this.nodes.push({ id: cleanTo, group: group });
             uniqueNodes.add(cleanTo);
           }
@@ -93,6 +98,10 @@ export class AppComponent {
 
       console.log('Nodes:', this.nodes);
       console.log('Edges:', this.edges);
+      this.network = {
+        nodes: this.nodes,
+        edges: this.edges
+      }
     };
 
     reader.readAsText(file);
@@ -108,7 +117,7 @@ export class AppComponent {
         if (line.trim().length === 0) {
           return;
         }
-        const cleanId = line.trim().split('.')[1];
+        const cleanId = line.trim().split('.').length > 1 ? line.trim().split('.')[1] : line.trim();
         seedGenes.add(cleanId);
       });
     };
@@ -118,6 +127,10 @@ export class AppComponent {
 
   onFileUpload(){
     if(this.seedFile && this.interactionFile){
+      this.nodes = []
+      this.edges = []
+      this.network = {}
+
       const seedSet = this.readSeedFile(this.seedFile)
       console.log(seedSet)
       this.readInteractions(this.interactionFile, seedSet)
