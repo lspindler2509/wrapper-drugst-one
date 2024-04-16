@@ -134,6 +134,11 @@ export class AppComponent {
       const seedSet = this.readSeedFile(this.seedFile)
       console.log(seedSet)
       this.readInteractions(this.interactionFile, seedSet)
+    } else if (this.interactionFile){
+      this.nodes = []
+      this.edges = []
+      this.network = {}
+      this.readInteractions(this.interactionFile, new Set<string>)
     }
 
   }

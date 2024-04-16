@@ -3,12 +3,6 @@
 <h2 class="page-title">Upload PPI network and seeds</h2>
 
 <div class="upload-section">
-    <input type="file" #seedFileInput (change)="addSeedFile($event)" accept=".csv" id="seed-file-input" hidden>
-    <button mat-raised-button color="secondary" (click)="seedFileInput.click()">Upload Seed File</button>
-    <span>{{ seedFileName }}</span>
-</div>
-
-<div class="upload-section">
     <input type="file" #interactionFileInput (change)="addInteractionFile($event)" accept=".csv"
         id="interaction-file-input" hidden>
     <button mat-raised-button color="secondary" (click)="interactionFileInput.click()">Upload Interaction
@@ -17,7 +11,13 @@
 </div>
 
 <div class="upload-section">
-    <button mat-raised-button color="primary" [disabled]="!seedFileName || !interactionFileName"
+    <input type="file" #seedFileInput (change)="addSeedFile($event)" accept=".csv" id="seed-file-input" hidden>
+    <button mat-raised-button color="secondary" (click)="seedFileInput.click()">Upload Seed File</button>
+    <span>{{ seedFileName }}</span>
+</div>
+
+<div class="upload-section">
+    <button mat-raised-button color="primary" [disabled]="!interactionFileName"
         (click)="onFileUpload()" class="mx-auto">Upload</button>
 </div>
 
