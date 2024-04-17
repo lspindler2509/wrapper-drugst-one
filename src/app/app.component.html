@@ -16,14 +16,14 @@
 <div class="upload-section">
     <input type="file" #interactionFileInput (change)="addInteractionFile($event)" accept=".csv, .sif, .graphml"
         id="interaction-file-input" hidden>
-    <button mat-raised-button color="secondary" (click)="interactionFileInput.click()">Upload Interaction
+    <button mat-raised-button color="secondary" [matTooltip]="textPPIfile" (click)="interactionFileInput.click()">Upload Interaction
         File</button>
     <span>{{ interactionFileName }}</span>
 </div>
 
 <div class="upload-section">
     <input type="file" #seedFileInput (change)="addSeedFile($event)" accept=".csv" id="seed-file-input" hidden>
-    <button mat-raised-button color="secondary" (click)="seedFileInput.click()">Upload Seed File</button>
+    <button mat-raised-button color="secondary" [matTooltip]="textSeedfile" (click)="seedFileInput.click()">Upload Seed File</button>
     <span>{{ seedFileName }}</span>
 </div>
 
@@ -32,7 +32,7 @@
         class="mx-auto">Upload</button>
 </div>
 
-<div *ngIf="network">
+<div *ngIf="network.nodes.length > 0">
     <h2 class="page-title">Visualization with Drugst.One</h2>
     <drugst-one id="netexp1"
         groups='{"nodeGroups":{"important":{"type":"gene","color":"#ff881f","font":{"color":"#000000"},"groupName":"Seed","shape":"image","image":"https://www.freepnglogos.com/uploads/dna-png/dna-genetic-genome-hospital-icon-35.png"},"gene":{"type":"gene","color":"#4da300","font":{"color":"#f0f0f0"},"groupName":"Discovered target","shape":"circle"},"foundDrug":{"type":"drug","color":"#F12590","font":{"color":"#000000"},"groupName":"Drug","shape":"diamond"}},"edgeGroups":{"default":{"color":"#000000","groupName":"default edge"}}}'

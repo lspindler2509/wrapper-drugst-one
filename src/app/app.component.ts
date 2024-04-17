@@ -7,11 +7,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { Node, Edge } from './interface';
+import { Node, Edge, Network} from './interface';
 import { MatIconModule } from '@angular/material/icon';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 
 
 @Component({
@@ -29,7 +28,7 @@ export class AppComponent {
   public edges: Edge[] = [];
   public seedFile: any;
   public interactionFile: any;
-  public network: any;
+  public network: Network = {nodes: [], edges: []};
   public selectedFormat: string = 'sif';
 
   public sifText: string = "SIF (Simple Interaction Format)\n" +
@@ -41,6 +40,11 @@ export class AppComponent {
     "Q9HCD6\\tQ9P244"
   
   public graphmlText: string = "Graphml object"
+
+  public textSeedfile: string = "Optional seedfile, one id per line."
+  
+  public textPPIfile: string = "Required PPI file in the chosen format."
+
 
 
   seedFileName: string | undefined;
@@ -57,7 +61,54 @@ export class AppComponent {
     this.interactionFile = event;
   }
 
-  readInteractions(event: any, seedGenes: Set<string>, format: string) {
+  parseGraphML(content: string, seedGenes: Set<string>): Network {
+    const nodes: Node[] = [];
+    const edges: Edge[] = [];
+
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(content, 'text/xml');
+
+    const graphNodes = xmlDoc.getElementsByTagName('node');
+    for (let i = 0; i < graphNodes.length; i++) {
+      const node = graphNodes[i];
+      const id = node.getAttribute('id') || '';
+      const group = seedGenes.has(id) ? 'important' : 'gene';
+      nodes.push({ id , group});
+    }
+
+    const graphEdges = xmlDoc.getElementsByTagName('edge');
+    for (let i = 0; i < graphEdges.length; i++) {
+      const edge = graphEdges[i];
+      const from = edge.getAttribute('source') || '';
+      const to = edge.getAttribute('target') || '';
+      edges.push({ from, to });
+    }
+
+    return { nodes, edges };
+  }
+
+  readInteractionsGraphml(event: any, seedGenes: Set<string>){
+
+    const file: File = event.target.files[0];
+
+    //TODO: check object and correct it
+
+    const reader: FileReader = new FileReader();
+    reader.onload = (e: any) => {
+      const contents: string = e.target.result;
+      const data: Network = this.parseGraphML(contents, seedGenes);
+      console.log(data)
+      this.nodes = data.nodes;
+      this.edges = data.edges;
+      this.network = {
+        nodes: this.nodes,
+        edges: this.edges
+      };
+    };
+    reader.readAsText(file, 'UTF-8');
+  }
+
+  readInteractionsText(event: any, seedGenes: Set<string>, format: string) {
     this.nodes = [];
     this.edges = [];
     const file: File = event.target.files[0];
@@ -168,26 +219,26 @@ export class AppComponent {
   onFileUpload() {
 
     if (this.seedFile && this.interactionFile) {
-      this.nodes = []
-      this.edges = []
-      this.network = {}
+      this.nodes = [];
+      this.edges = [];
+      this.network = { nodes: [], edges: [] };
 
       if (this.selectedFormat == "csv" || this.selectedFormat == "sif") {
         const seedSet = this.readSeedFile(this.seedFile)
-        this.readInteractions(this.interactionFile, seedSet, this.selectedFormat)
+        this.readInteractionsText(this.interactionFile, seedSet, this.selectedFormat)
       } else if (this.selectedFormat == "graphml") {
         const seedSet = this.readSeedFile(this.seedFile)
-
+        this.readInteractionsGraphml(this.interactionFile, seedSet)
       }
     } else if (this.interactionFile) {
-      this.nodes = []
-      this.edges = []
-      this.network = {}
+      this.nodes = [];
+      this.edges = [];
+      this.network = { nodes: [], edges: [] };
 
       if (this.selectedFormat == "csv" || this.selectedFormat == "sif") {
-        this.readInteractions(this.interactionFile, new Set<string>, this.selectedFormat)
+        this.readInteractionsText(this.interactionFile, new Set<string>, this.selectedFormat)
       } else if (this.selectedFormat == "graphml") {
-
+        this.readInteractionsGraphml(this.interactionFile, new Set<string>)
       }
 
     }
