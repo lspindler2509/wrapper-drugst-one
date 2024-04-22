@@ -30,6 +30,10 @@ export class AppComponent {
   public interactionFile: any;
   public network: Network = {nodes: [], edges: []};
   public selectedFormat: string = 'sif';
+  public selectedIdspace: string = 'uniprot';
+
+  public config: string = '{"customEdges":{"default":true, "selectable":false}, "showAdvAnalysisContent":["drug-search", "drug-target-search", "gene-analysis","enrichment-gprofiler", "enrichment-digest", "search-ndex"],"identifier":"uniprot","title":"ROBUST output network", "taskDrugName": "Drug search", "showLegendNodes": true, "showLegendEdges": true, "showSidebar": "left", "showOverview": true, "legendPos": "left", "legendClass": "legend", "showQuery": true, "showItemSelector": true,"showSimpleAnalysis": true,"showAdvAnalysis": true,"showSelection": true,"showTasks": true,"showNetworkMenu": "right","showLegend": true,"showNetworkMenuButtonExpression": true, "showNetworkMenuButtonScreenshot": true,"showNetworkMenuButtonExportGraphml": true,"showNetworkMenuButtonAdjacentDrugs": true,"showNetworkMenuButtonCenter": true,"showConnectGenes": true,"networkMenuButtonAdjacentDrugsLabel": "Drugs","showNetworkMenuButtonAdjacentDisordersProteins": true,"networkMenuButtonAdjacentDisordersProteinsLabel": "Disorders (protein)","showNetworkMenuButtonAdjacentDisordersDrugs": true,"networkMenuButtonAdjacentDisordersDrugsLabel": "Disorders (drug)","showNetworkMenuButtonAnimation": true,"networkMenuButtonAnimationLabel": "Animation", "autofillEdges": false, "useNedrexLicenced": true,"selfReferences": false, "interactionDrugProtein": "NeDRex", "indicationDrugDisorder": "NeDRex","nodeShadow": true,"edgeShadow": true, "algorithms": {"drug": ["trustrank", "closeness", "degree", "proximity"], "drug-target": ["trustrank", "multisteiner", "keypathwayminer", "degree", "closeness", "betweenness"], "gene":["pathway-enrichment", "louvain-clustering"]}, "associatedProteinDisorder": "NeDRex", "nodeGroups":{"overlap":{"color":"#FC6C85","shape":"circle","type":"gene","font":{"color":"#000000"},"groupName":"overlap"},"onlyNetwork":{"color":"#ffff00","shape":"circle","type":"gene","font":{"color":"#000000"},"groupName":"only in network"},"onlyPathway":{"color":"#ffa500","shape":"circle","type":"gene","font":{"color":"#000000"},"groupName":"only in pathway"}, "important":{"type":"gene","color":"#ff881f","font":{"color":"#000000"},"groupName":"Seed","shape":"star"},"gene":{"type":"gene","color":"#4da300","font":{"color":"#f0f0f0"},"groupName":"Discovered target","shape":"circle"},"foundDrug":{"type":"drug","color":"#F12590","font":{"color":"#000000"},"groupName":"Drug","shape":"diamond"}},"edgeGroups":{"default":{"color":"#000000","groupName":"default edge"}}}'
+
 
   public sifText: string = "SIF (Simple Interaction Format)\n" +
     "Example:\n" +
@@ -216,8 +220,15 @@ export class AppComponent {
     return (seedGenes)
   }
 
-  onFileUpload() {
+  private updateIdentifierValue(): void {
+    const configObject = JSON.parse(this.config);
+    configObject.identifier = this.selectedIdspace;
+    this.config = JSON.stringify(configObject);
+  }
 
+
+  onFileUpload() {
+    this.updateIdentifierValue()
     if (this.seedFile && this.interactionFile) {
       this.nodes = [];
       this.edges = [];
