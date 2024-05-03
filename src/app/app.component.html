@@ -44,11 +44,14 @@
         class="mx-auto">Upload</button>
 </div>
 
-<div *ngIf="network.nodes.length > 0">
+<div *ngIf="network.nodes.length > 0" class="upload-section">
     <h2 class="page-title">Visualization with Drugst.One</h2>
     <drugst-one id="netexp1"
         groups='{"nodeGroups":{"important":{"type":"gene","color":"#ff881f","font":{"color":"#000000"},"groupName":"Seed","shape":"image","image":"https://www.freepnglogos.com/uploads/dna-png/dna-genetic-genome-hospital-icon-35.png"},"gene":{"type":"gene","color":"#4da300","font":{"color":"#f0f0f0"},"groupName":"Discovered target","shape":"circle"},"foundDrug":{"type":"drug","color":"#F12590","font":{"color":"#000000"},"groupName":"Drug","shape":"diamond"}},"edgeGroups":{"default":{"color":"#000000","groupName":"default edge"}}}'
         [config] ="config"
         [network]="network">
     </drugst-one>
+</div>
+<div class="upload-section">
+    <h3 class="page-title">Extension of Drugst.one</h3>
 </div>
